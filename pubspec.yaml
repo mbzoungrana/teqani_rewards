@@ -9,25 +9,10 @@ funding:
   - https://www.buymeacoffee.com/Teqani
 topics:
   - gamification
-  - achievements
-  - streaks
-  - challenges
-  - rewards
-  - user-engagement
   - flutter
-  - dart
-  - firebase-integration
-  - sqlite-database
-  - hive-database
-  - shared-preferences
+  - achievements
+  - firebase
   - analytics
-  - user-tracking
-  - encryption
-  - secure-storage
-  - cross-platform
-  - customizable-ui
-  - localization
-  - dark-mode
 
 environment:
   sdk: '>=3.0.0 <4.0.0'
