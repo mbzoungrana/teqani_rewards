@@ -52,6 +52,21 @@ If you find this package helpful, consider buying us a coffee to support ongoing
 - ✅ **Dark/Light Mode** - Perfect for any app theme
 - ✅ **Comprehensive API** - Full control over all features
 
+## 🔒 Advanced Security Features
+
+**Teqani Rewards ensures your data is always secure and protected!**
+
+- 🔐 **Data Encryption** - All local data is encrypted using AES-256 encryption
+- 🛡️ **Secure Storage** - Protected storage implementation for sensitive data
+- 🔑 **Key Management** - Secure key generation and management system
+- 🔄 **Data Integrity** - Automatic data validation and integrity checks
+- 🚫 **Anti-Tampering** - Protection against unauthorized modifications
+- 📱 **Platform Security** - Leverages platform-specific security features
+- 🔍 **Audit Logging** - Track all data access and modifications
+- 🧹 **Secure Cleanup** - Proper data sanitization when removing data
+
+> **💡 SECURITY FIRST!** Unlike other gamification packages, Teqani Rewards implements enterprise-grade security measures to protect your users' data and achievements.
+
 ## 🔑 Zero Configuration Storage
 
 **Teqani Rewards works right out of the box with multiple storage options!**
