@@ -1,8 +1,33 @@
 name: teqani_rewards
 description: A powerful Flutter package for implementing gamification features. Includes achievement systems, streak tracking, and time-limited challenges with SharedPreferences, SQLite, Hive, and Firebase storage options. Built-in Firebase Analytics for tracking user engagement and behavior.
 version: 0.1.0
-publish_to: 'https://pub.dev/publishers/teqani.org'
-homepage: https://github.com/teqani-org/teqani_rewards
+homepage: https://teqani.org
+repository: https://github.com/teqani-org/teqani_rewards
+issue_tracker: https://github.com/teqani-org/teqani_rewards/issues
+documentation: https://docs.teqani.org/teqani_rewards
+funding:
+  - https://www.buymeacoffee.com/Teqani
+topics:
+  - gamification
+  - achievements
+  - streaks
+  - challenges
+  - rewards
+  - user-engagement
+  - flutter
+  - dart
+  - firebase-integration
+  - sqlite-database
+  - hive-database
+  - shared-preferences
+  - analytics
+  - user-tracking
+  - encryption
+  - secure-storage
+  - cross-platform
+  - customizable-ui
+  - localization
+  - dark-mode
 
 environment:
   sdk: '>=3.0.0 <4.0.0'
