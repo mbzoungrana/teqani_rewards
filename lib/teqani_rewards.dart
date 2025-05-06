@@ -41,7 +41,7 @@ class TeqaniRewards {
   static FirebaseAnalytics? _analytics;
 
   /// Initialize the Teqani Rewards package
-  /// 
+  ///
   /// [theme] - Optional custom theme for the widgets
   /// [storageType] - The type of storage to use for persisting data
   /// [storageOptions] - Additional options for the selected storage type
@@ -57,15 +57,15 @@ class TeqaniRewards {
     }
 
     _theme = theme ?? TeqaniRewardsTheme.defaultTheme;
-    
+
     // Initialize the storage manager based on the selected type
     _storageManager = StorageManager(
       storageType: storageType,
       options: storageOptions,
     );
-    
+
     await _storageManager!.initialize();
-    
+
     // Initialize Firebase Analytics if enabled
     if (enableAnalytics) {
       try {
@@ -82,12 +82,13 @@ class TeqaniRewards {
         debugPrint('Failed to initialize Firebase Analytics: $e');
       }
     }
-    
+
     _isInitialized = true;
   }
 
   /// Get the current theme
-  static TeqaniRewardsTheme get theme => _theme ?? TeqaniRewardsTheme.defaultTheme;
+  static TeqaniRewardsTheme get theme =>
+      _theme ?? TeqaniRewardsTheme.defaultTheme;
 
   /// Get the storage manager
   static StorageManager get storageManager => _storageManager!;
@@ -96,9 +97,8 @@ class TeqaniRewards {
   static FirebaseAnalytics? get analytics => _analytics;
 
   /// Get the analytics service
-  static TeqaniAnalyticsService? get analyticsService => _analytics != null 
-      ? TeqaniAnalyticsService(analytics: _analytics)
-      : null;
+  static TeqaniAnalyticsService? get analyticsService =>
+      _analytics != null ? TeqaniAnalyticsService(analytics: _analytics) : null;
 
   /// Check if the package is initialized
   static bool get isInitialized => _isInitialized;
@@ -127,7 +127,7 @@ class TeqaniRewards {
     StorageType storageType = StorageType.sharedPreferences,
   }) async {
     _storageType = storageType;
-    
+
     if (storageType == StorageType.firebase) {
       if (app == null) {
         throw Exception('FirebaseApp is required when using Firebase storage');
@@ -145,7 +145,7 @@ class TeqaniRewards {
   Future<List<Achievement>> getAchievements() async {
     if (_storageType == StorageType.firebase) {
       if (_userId == null) throw Exception('User not authenticated');
-      
+
       final snapshot = await _firestore!
           .collection('users')
           .doc(_userId)
@@ -158,7 +158,7 @@ class TeqaniRewards {
     } else {
       final achievementsJson = _prefs?.getString('achievements_$_userId');
       if (achievementsJson == null) return [];
-      
+
       final List<dynamic> decoded = jsonDecode(achievementsJson);
       return decoded.map((json) => Achievement.fromJson(json)).toList();
     }
@@ -188,19 +188,20 @@ class TeqaniRewards {
         'isUnlocked': true,
         'unlockedAt': DateTime.now().toIso8601String(),
       });
-      
+
       // Log achievement unlock event
       _analytics?.logEvent(
         name: 'achievement_unlocked',
         parameters: {
           'achievement_id': achievementId,
-          'user_id': _userId,
+          'user_id': _userId ?? 'unknown_user',
         },
       );
     } else {
       final achievements = await getAchievements();
-      final achievementIndex = achievements.indexWhere((a) => a.id == achievementId);
-      
+      final achievementIndex =
+          achievements.indexWhere((a) => a.id == achievementId);
+
       if (achievementIndex == -1) {
         throw Exception('Achievement not found');
       }
@@ -214,13 +215,13 @@ class TeqaniRewards {
         'achievements_$_userId',
         jsonEncode(achievements.map((a) => a.toJson()).toList()),
       );
-      
+
       // Log achievement unlock event
       _analytics?.logEvent(
         name: 'achievement_unlocked',
         parameters: {
           'achievement_id': achievementId,
-          'user_id': _userId,
+          'user_id': _userId ?? 'unknown_user',
         },
       );
     }
@@ -260,7 +261,7 @@ class TeqaniRewards {
           streakType: streakType,
         );
       }
-      
+
       return Streak.fromJson(jsonDecode(streakJson));
     }
   }
@@ -307,7 +308,7 @@ class TeqaniRewards {
         jsonEncode(newStreak.toJson()),
       );
     }
-    
+
     // Log streak update event
     _analytics?.logEvent(
       name: 'streak_updated',
@@ -315,7 +316,7 @@ class TeqaniRewards {
         'streak_type': streakType,
         'current_streak': newCurrentStreak,
         'longest_streak': newStreak.longestStreak,
-        'user_id': _userId,
+        'user_id': _userId ?? 'unknown_user',
       },
     );
   }
@@ -324,7 +325,7 @@ class TeqaniRewards {
   Future<List<Challenge>> getChallenges() async {
     if (_storageType == StorageType.firebase) {
       if (_userId == null) throw Exception('User not authenticated');
-      
+
       final snapshot = await _firestore!
           .collection('users')
           .doc(_userId)
@@ -337,13 +338,14 @@ class TeqaniRewards {
     } else {
       final challengesJson = _prefs?.getString('challenges_$_userId');
       if (challengesJson == null) return [];
-      
+
       final List<dynamic> decoded = jsonDecode(challengesJson);
       return decoded.map((json) => Challenge.fromJson(json)).toList();
     }
   }
 
-  Future<void> updateChallengeProgress(String challengeId, double progress) async {
+  Future<void> updateChallengeProgress(
+      String challengeId, double progress) async {
     if (_storageType == StorageType.firebase) {
       if (_userId == null) throw Exception('User not authenticated');
 
@@ -370,7 +372,7 @@ class TeqaniRewards {
     } else {
       final challenges = await getChallenges();
       final challengeIndex = challenges.indexWhere((c) => c.id == challengeId);
-      
+
       if (challengeIndex == -1) {
         throw Exception('Challenge not found');
       }
@@ -385,14 +387,14 @@ class TeqaniRewards {
         jsonEncode(challenges.map((c) => c.toJson()).toList()),
       );
     }
-    
+
     // Log challenge progress event
     _analytics?.logEvent(
       name: 'challenge_progress_updated',
       parameters: {
         'challenge_id': challengeId,
         'progress': progress,
-        'user_id': _userId,
+        'user_id': _userId ?? 'unknown_user',
       },
     );
   }
@@ -483,16 +485,16 @@ extension TeqaniRewardsWidgets on TeqaniRewards {
 enum StorageType {
   /// Uses SharedPreferences for local storage
   sharedPreferences,
-  
+
   /// Uses SQLite database for local storage
   sqlite,
-  
+
   /// Uses Hive for local storage
   hive,
-  
+
   /// Uses Firebase for cloud storage
   firebase,
-  
+
   /// Uses custom storage implementation
   custom,
 }
