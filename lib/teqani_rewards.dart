@@ -5,7 +5,6 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 
 import 'src/models/achievement.dart';
@@ -32,6 +31,7 @@ export 'src/onboarding/onboarding_screen.dart';
 export 'src/onboarding/gamified_onboarding.dart';
 export 'src/onboarding/quest_onboarding.dart';
 export 'src/onboarding/pulse_onboarding.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 /// Main entry point for the Teqani Rewards package
 class TeqaniRewards {
