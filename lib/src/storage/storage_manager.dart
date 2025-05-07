@@ -549,7 +549,7 @@ class StorageManager {
       final analytics = FirebaseAnalytics.instance;
       await analytics.logEvent(
         name: eventName,
-        parameters: parameters,
+        parameters: parameters?.cast<String, Object>(),
       );
     } catch (e) {
       // Ignore analytics errors
