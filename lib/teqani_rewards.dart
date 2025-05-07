@@ -40,12 +40,6 @@ class TeqaniRewards {
   static bool _isInitialized = false;
   static FirebaseAnalytics? _analytics;
 
-  /// Initialize the Teqani Rewards package
-  ///
-  /// [theme] - Optional custom theme for the widgets
-  /// [storageType] - The type of storage to use for persisting data
-  /// [storageOptions] - Additional options for the selected storage type
-  /// [enableAnalytics] - Whether to enable Firebase Analytics (default: true)
   static Future<void> init({
     TeqaniRewardsTheme? theme,
     StorageType storageType = StorageType.sharedPreferences,
@@ -57,27 +51,17 @@ class TeqaniRewards {
     }
 
     _theme = theme ?? TeqaniRewardsTheme.defaultTheme;
-
-    // Initialize the storage manager based on the selected type
     _storageManager = StorageManager(
       storageType: storageType,
       options: storageOptions,
     );
-
     await _storageManager!.initialize();
 
-    // Initialize Firebase Analytics if enabled
     if (enableAnalytics) {
       try {
         _analytics = FirebaseAnalytics.instance;
         await _analytics!.setAnalyticsCollectionEnabled(true);
-        await _analytics!.logEvent(
-          name: 'teqani_rewards_initialized',
-          parameters: {
-            'storage_type': storageType.toString(),
-            'theme': theme != null ? 'custom' : 'default',
-          },
-        );
+        // Log event removed
       } catch (e) {
         debugPrint('Failed to initialize Firebase Analytics: $e');
       }
@@ -86,33 +70,21 @@ class TeqaniRewards {
     _isInitialized = true;
   }
 
-  /// Get the current theme
   static TeqaniRewardsTheme get theme =>
       _theme ?? TeqaniRewardsTheme.defaultTheme;
 
-  /// Get the storage manager
   static StorageManager get storageManager => _storageManager!;
 
-  /// Get the analytics instance
   static FirebaseAnalytics? get analytics => _analytics;
 
-  /// Get the analytics service
   static TeqaniAnalyticsService? get analyticsService =>
       _analytics != null ? TeqaniAnalyticsService(analytics: _analytics) : null;
 
-  /// Check if the package is initialized
   static bool get isInitialized => _isInitialized;
 
-  /// Streak widgets
   static final streaks = TeqaniStreakWidgets();
-
-  /// Achievement widgets
   static final achievements = TeqaniAchievementWidgets();
-
-  /// Challenge widgets
   static final challenges = TeqaniChallengeWidgets();
-
-  /// Onboarding widgets
   static final onboarding = TeqaniOnboardingWidgets();
 
   FirebaseFirestore? _firestore;
@@ -141,7 +113,6 @@ class TeqaniRewards {
     }
   }
 
-  // Achievement Methods
   Future<List<Achievement>> getAchievements() async {
     if (_storageType == StorageType.firebase) {
       if (_userId == null) throw Exception('User not authenticated');
@@ -188,19 +159,10 @@ class TeqaniRewards {
         'isUnlocked': true,
         'unlockedAt': DateTime.now().toIso8601String(),
       });
-
-      // Log achievement unlock event
-      _analytics?.logEvent(
-        name: 'achievement_unlocked',
-        parameters: {
-          'achievement_id': achievementId,
-          'user_id': _userId ?? 'unknown_user',
-        },
-      );
     } else {
       final achievements = await getAchievements();
       final achievementIndex =
-          achievements.indexWhere((a) => a.id == achievementId);
+      achievements.indexWhere((a) => a.id == achievementId);
 
       if (achievementIndex == -1) {
         throw Exception('Achievement not found');
@@ -215,19 +177,9 @@ class TeqaniRewards {
         'achievements_$_userId',
         jsonEncode(achievements.map((a) => a.toJson()).toList()),
       );
-
-      // Log achievement unlock event
-      _analytics?.logEvent(
-        name: 'achievement_unlocked',
-        parameters: {
-          'achievement_id': achievementId,
-          'user_id': _userId ?? 'unknown_user',
-        },
-      );
     }
   }
 
-  // Streak Methods
   Future<Streak> getStreak(String streakType) async {
     if (_storageType == StorageType.firebase) {
       if (_userId == null) throw Exception('User not authenticated');
@@ -275,13 +227,10 @@ class TeqaniRewards {
 
     int newCurrentStreak = streak.currentStreak;
     if (daysSinceLastActivity == 0) {
-      // Already updated today
       return;
     } else if (daysSinceLastActivity == 1) {
-      // Consecutive day
       newCurrentStreak++;
     } else {
-      // Streak broken
       newCurrentStreak = 1;
     }
 
@@ -308,20 +257,8 @@ class TeqaniRewards {
         jsonEncode(newStreak.toJson()),
       );
     }
-
-    // Log streak update event
-    _analytics?.logEvent(
-      name: 'streak_updated',
-      parameters: {
-        'streak_type': streakType,
-        'current_streak': newCurrentStreak,
-        'longest_streak': newStreak.longestStreak,
-        'user_id': _userId ?? 'unknown_user',
-      },
-    );
   }
 
-  // Challenge Methods
   Future<List<Challenge>> getChallenges() async {
     if (_storageType == StorageType.firebase) {
       if (_userId == null) throw Exception('User not authenticated');
@@ -387,97 +324,6 @@ class TeqaniRewards {
         jsonEncode(challenges.map((c) => c.toJson()).toList()),
       );
     }
-
-    // Log challenge progress event
-    _analytics?.logEvent(
-      name: 'challenge_progress_updated',
-      parameters: {
-        'challenge_id': challengeId,
-        'progress': progress,
-        'user_id': _userId ?? 'unknown_user',
-      },
-    );
-  }
-}
-
-/// Extension methods for easier widget creation
-extension TeqaniRewardsWidgets on TeqaniRewards {
-  /// Create a pulsating streak widget
-  static Widget createPulsatingStreak({
-    required Streak streak,
-    VoidCallback? onUpdate,
-    TeqaniRewardsTheme? theme,
-  }) {
-    return TeqaniStreakWidgets.pulsating(
-      streak: streak,
-      onUpdate: onUpdate,
-      theme: theme ?? TeqaniRewards.theme,
-    );
-  }
-
-  /// Create a counting up streak widget
-  static Widget createCountUpStreak({
-    required Streak streak,
-    VoidCallback? onUpdate,
-    TeqaniRewardsTheme? theme,
-  }) {
-    return TeqaniStreakWidgets.countUp(
-      streak: streak,
-      onUpdate: onUpdate,
-      theme: theme ?? TeqaniRewards.theme,
-    );
-  }
-
-  /// Create a modern streak card
-  static Widget createModernStreak({
-    required Streak streak,
-    VoidCallback? onUpdate,
-    TeqaniRewardsTheme? theme,
-  }) {
-    return TeqaniStreakWidgets.modern(
-      streak: streak,
-      onUpdate: onUpdate,
-      theme: theme ?? TeqaniRewards.theme,
-    );
-  }
-
-  /// Create a streak calendar view
-  static Widget createStreakCalendar({
-    required Streak streak,
-    VoidCallback? onUpdate,
-    TeqaniRewardsTheme? theme,
-  }) {
-    return TeqaniStreakWidgets.calendar(
-      streak: streak,
-      onUpdate: onUpdate,
-      theme: theme ?? TeqaniRewards.theme,
-    );
-  }
-
-  /// Create a circular progress streak widget
-  static Widget createCircularProgressStreak({
-    required Streak streak,
-    VoidCallback? onUpdate,
-    TeqaniRewardsTheme? theme,
-  }) {
-    return TeqaniStreakWidgets.circularProgress(
-      streak: streak,
-      onUpdate: onUpdate,
-      theme: theme ?? TeqaniRewards.theme,
-    );
-  }
-
-  /// Create a floating streak widget
-  static Widget createFloatingStreak({
-    required Streak streak,
-    VoidCallback? onUpdate,
-    TeqaniRewardsTheme? theme,
-  }) {
-    return TeqaniStreakWidgets.floating(
-      streak: streak,
-      onUpdate: onUpdate,
-      theme: theme ?? TeqaniRewards.theme,
-    );
   }
 }
 
